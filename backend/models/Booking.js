@@ -8,7 +8,7 @@ const bookingSchema = new mongoose.Schema(
       required: true,
     },
     expertName: { type: String, required: true },
-    slotId: { type: String, required: true }, // timeSlot._id as string
+    slotId: { type: String, required: true }, 
     clientName: { type: String, required: true, trim: true },
     clientEmail: {
       type: String,
@@ -22,7 +22,7 @@ const bookingSchema = new mongoose.Schema(
       required: true,
       match: [/^[0-9+\-\s()]{7,15}$/, 'Please enter a valid phone number'],
     },
-    date: { type: String, required: true }, // YYYY-MM-DD
+    date: { type: String, required: true }, 
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     notes: { type: String, default: '', maxlength: 500 },
@@ -35,7 +35,6 @@ const bookingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Compound index to help with double-booking queries
 bookingSchema.index({ expertId: 1, date: 1, startTime: 1 }, { unique: true });
 
 module.exports = mongoose.model('Booking', bookingSchema);

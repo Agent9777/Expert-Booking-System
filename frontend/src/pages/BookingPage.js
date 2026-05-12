@@ -120,7 +120,7 @@ export default function BookingPage() {
       cancelled = true;
       clearInterval(timerRef.current);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -135,7 +135,7 @@ export default function BookingPage() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       if (lockStatus === 'locked' && !success) releaseReservation();
     };
-  }, [lockStatus, success, releaseReservation]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lockStatus, success, releaseReservation]); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;

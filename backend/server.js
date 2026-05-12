@@ -18,10 +18,10 @@ const io = new Server(server, {
   },
 });
 
-// Connect to MongoDB
+
 connectDB();
 
-// Middleware
+
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true,
@@ -29,7 +29,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Make io available in routes via req
+
 app.use((req, res, next) => {
   req.io = io;
   next();
@@ -59,10 +59,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Socket.io connection
+
 io.on('connection', (socket) => {
   console.log(`Client connected: ${socket.id}`);
-  let heldReservation = null; // track if this socket holds a reservation
+  let heldReservation = null; 
 
   socket.on('join-expert-room', (expertId) => {
     socket.join(`expert-${expertId}`);
@@ -84,7 +84,6 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', async () => {
     console.log(`Client disconnected: ${socket.id}`);
-    // Auto-release reservation if socket drops while on booking page
     if (heldReservation) {
       const { expertId, slotId, sessionId, date, startTime } = heldReservation;
       try {

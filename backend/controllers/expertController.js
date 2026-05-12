@@ -1,6 +1,5 @@
 const Expert = require('../models/Expert');
 
-// GET /api/experts
 const getExperts = async (req, res) => {
   try {
     const {
@@ -56,7 +55,7 @@ const getExperts = async (req, res) => {
   }
 };
 
-// GET /api/experts/:id
+
 const getExpertById = async (req, res) => {
   try {
     const expert = await Expert.findById(req.params.id).lean();
@@ -70,7 +69,7 @@ const getExpertById = async (req, res) => {
     const today = new Date().toISOString().split('T')[0];
 
     (expert.availableSlots || [])
-      .filter((slot) => slot.date >= today) // Only future slots
+      .filter((slot) => slot.date >= today) 
       .sort((a, b) => {
         if (a.date !== b.date) return a.date.localeCompare(b.date);
         return a.startTime.localeCompare(b.startTime);

@@ -2,10 +2,9 @@ const mongoose = require('mongoose');
 const SlotReservation = require('../models/SlotReservation');
 const Expert = require('../models/Expert');
 
-const LOCK_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+const LOCK_DURATION_MS = 5 * 60 * 1000; 
 
-// POST /api/reservations/lock
-// Called the moment user lands on the booking page
+
 const lockSlot = async (req, res) => {
   const { expertId, slotId, date, startTime, sessionId } = req.body;
 
@@ -14,7 +13,6 @@ const lockSlot = async (req, res) => {
   }
 
   try {
-    // 1. Confirm the slot exists and is not already permanently booked
     const expert = await Expert.findOne({
       _id: expertId,
       availableSlots: { $elemMatch: { _id: slotId, isBooked: false } },
@@ -29,7 +27,7 @@ const lockSlot = async (req, res) => {
 
     const expiresAt = new Date(Date.now() + LOCK_DURATION_MS);
 
-    // 2. Atomically insert a reservation — fails if one already exists (unique index)
+
     try {
       const reservation = await SlotReservation.findOneAndUpdate(
         { expertId, slotId },
@@ -37,7 +35,7 @@ const lockSlot = async (req, res) => {
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
 
-      // If a different session holds the lock, reject
+
       if (reservation.sessionId !== sessionId) {
         const secondsLeft = Math.ceil((reservation.expiresAt - Date.now()) / 1000);
         return res.status(409).json({
@@ -46,11 +44,11 @@ const lockSlot = async (req, res) => {
         });
       }
 
-      // 3. Broadcast to expert room so others see it as "Reserved"
+
       req.io.to(`expert-${expertId}`).emit('slot-reserved', {
         expertId, slotId, date, startTime,
         expiresAt: expiresAt.toISOString(),
-        byCurrentUser: false, // other clients show as locked
+        byCurrentUser: false, 
       });
 
       return res.status(200).json({
@@ -60,7 +58,7 @@ const lockSlot = async (req, res) => {
         sessionId,
       });
     } catch (err) {
-      // Duplicate key = race condition, someone just took it
+      
       if (err.code === 11000) {
         const existing = await SlotReservation.findOne({ expertId, slotId });
         const secondsLeft = existing
@@ -79,8 +77,7 @@ const lockSlot = async (req, res) => {
   }
 };
 
-// DELETE /api/reservations/release
-// Called when user leaves the booking page without submitting
+
 const releaseSlot = async (req, res) => {
   const { expertId, slotId, sessionId } = req.body;
 
@@ -89,7 +86,7 @@ const releaseSlot = async (req, res) => {
   }
 
   try {
-    // Only the owner of the reservation can release it
+  
     const deleted = await SlotReservation.findOneAndDelete({ expertId, slotId, sessionId });
 
     if (deleted) {
@@ -107,8 +104,7 @@ const releaseSlot = async (req, res) => {
   }
 };
 
-// GET /api/reservations/:expertId — get all active reservations for an expert
-// Used by detail page to mark reserved slots
+
 const getReservations = async (req, res) => {
   try {
     const reservations = await SlotReservation.find({

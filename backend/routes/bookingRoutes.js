@@ -42,13 +42,13 @@ const bookingValidation = [
   body('sessionId').optional().isString(),
 ];
 
-// POST /api/bookings
+
 router.post('/', bookingValidation, createBooking);
 
-// GET /api/bookings?email=user@example.com
+
 router.get('/', getBookingsByEmail);
 
-// PATCH /api/bookings/:id/status
+
 router.patch('/:id/status', updateBookingStatus);
 
 module.exports = router;
