@@ -103,4 +103,5 @@ REACT_APP_SOCKET_URL=http://localhost:5000
 
 ##  Working
 
-[[video:work.mp4]]
+<video src="work.mp4" controls="controls" style="max-width: 100%;">
+</video>
